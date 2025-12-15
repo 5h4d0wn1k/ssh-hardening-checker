@@ -83,74 +83,85 @@ Checklist:
 
 ## Hardening Recommendations
 
-### 1. Disable Password Authentication
+### 1. Password Authentication
+
+**Recommendation**: Disable password authentication, use key-based only
 
 ```bash
 # In /etc/ssh/sshd_config
 PasswordAuthentication no
+PubkeyAuthentication yes
 ```
 
-### 2. Disable Root Login
+### 2. Root Login
+
+**Recommendation**: Disable root login
 
 ```bash
 # In /etc/ssh/sshd_config
 PermitRootLogin no
 ```
 
-### 3. Use Strong Key Exchange
+### 3. Key Exchange Algorithms
+
+**Recommendation**: Use strong key exchange algorithms
 
 ```bash
 # In /etc/ssh/sshd_config
 KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
 ```
 
-### 4. Limit Login Attempts
+### 4. MAC Algorithms
+
+**Recommendation**: Use strong MAC algorithms
 
 ```bash
 # In /etc/ssh/sshd_config
-MaxAuthTries 3
-LoginGraceTime 30
+MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com
 ```
 
-### 5. Restrict Users
+### 5. Cipher Algorithms
+
+**Recommendation**: Use strong cipher algorithms
+
+```bash
+# In /etc/ssh/sshd_config
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
+```
+
+### 6. Login Grace Time
+
+**Recommendation**: Set low login grace time
+
+```bash
+# In /etc/ssh/sshd_config
+LoginGraceTime 30
+MaxAuthTries 3
+```
+
+### 7. User Restrictions
+
+**Recommendation**: Limit allowed users
 
 ```bash
 # In /etc/ssh/sshd_config
 AllowUsers user1 user2
-# OR
+# Or
 AllowGroups sshusers
-```
-
-## Examples
-
-### Example 1: Basic Check
-
-```bash
-# Check SSH hardening
-python ssh_hardening_check.py --host 192.168.1.100
-```
-
-### Example 2: Custom Port
-
-```bash
-# Check SSH on custom port
-python ssh_hardening_check.py \
-  --host 192.168.1.100 \
-  --port 2222
 ```
 
 ## Use Cases
 
 - **Security Audits**: Check SSH configuration on your servers
 - **Hardening**: Implement SSH security best practices
-- **Penetration Testing**: Authorized security assessments
-- **Educational Purposes**: Learn about SSH security hardening
+- **Compliance**: Meet security compliance requirements
+- **Educational Purposes**: Learn about SSH security
 
 ## Legal Disclaimer
 
 ⚠️ **IMPORTANT**: This tool is for authorized security testing and educational purposes only.
 
-- Only test SSH servers you own or have explicit written authorization to test
+- Only check SSH servers you own or have explicit written authorization to test
 - Follow responsible disclosure practices
 - Comply with all applicable laws and regulations
 
@@ -169,4 +180,4 @@ This project is for educational purposes only. Use responsibly and ethically.
 
 ---
 
-**Remember**: Always get explicit authorization before testing any SSH server!
+**Remember**: Always implement SSH hardening recommendations on your servers!

@@ -10,6 +10,20 @@ from typing import Optional
 
 
 async def grab_banner(host: str, port: int, timeout: float) -> Optional[str]:
+    """
+    Grab SSH banner from a remote host.
+    
+    Connects to the SSH service and reads the initial banner message.
+    Uses asyncio for non-blocking I/O.
+    
+    Args:
+        host: Target hostname or IP address.
+        port: SSH port number (default 22).
+        timeout: Connection timeout in seconds.
+        
+    Returns:
+        Banner string if successful, None if connection fails or no banner received.
+    """
     try:
         reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
         data = await asyncio.wait_for(reader.read(128), timeout=1.0)

@@ -1,4 +1,4 @@
-# Contributing to ssh\-hardening\-checker
+# Contributing to ssh-hardening-checker
 
 Thanks for your interest! This project is **educational and defensive** software
 for authorized, responsible security practice — see [ETHICS.md](ETHICS.md) and

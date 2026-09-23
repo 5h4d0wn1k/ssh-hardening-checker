@@ -3,210 +3,63 @@
 > or hold explicit written authorization to assess**. Unauthorized use is
 > prohibited and may be illegal. Read [ETHICS.md](ETHICS.md) and
 > [SCOPE.md](SCOPE.md) before use. Use at your own risk; **AS IS**, no warranty.
+
 # SSH Hardening Checker
 
-⚠️ **EDUCATIONAL PURPOSE ONLY** - This tool is designed for authorized security testing and educational purposes. Only use on SSH servers you own or have explicit written authorization to test.
+SSH security hardening checker for authorized security testing — grabs the SSH service banner and
+prints an OpenSSH hardening checklist (key-only auth, root login, Kex/MAC/Cipher, login grace
+time, and user restrictions). Standard library only, v1.1.0.
 
-## Overview
+![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+![GitHub stars](https://img.shields.io/github/stars/5h4d0wn1k/ssh-hardening-checker)
+![GitHub last commit](https://img.shields.io/github/last-commit/5h4d0wn1k/ssh-hardening-checker)
+![GitHub issues](https://img.shields.io/github/issues/5h4d0wn1k/ssh-hardening-checker)
 
-A comprehensive SSH security hardening checker that analyzes SSH configuration and provides recommendations for securing SSH services. Checks banners, configuration, and provides hardening guidance.
+## Why
+
+SSH is the front door of nearly every server, and its defaults are rarely the secure choice. This
+tool makes the audit repeatable: it connects to a host, reads the SSH banner (revealing the server
+version), then prints the canonical OpenSSH hardening checklist — disable password auth, disable
+root login, enforce strong KexAlgorithms/MACs/Ciphers, tighten LoginGraceTime and MaxAuthTries, and
+scope users with AllowUsers/AllowGroups. It is a focused, dependency-free SSH-security and
+hardening educational tool for use only against SSH servers you own or hold explicit written
+authorization to test.
 
 ## Features
 
-- **Banner Analysis**: Retrieves and analyzes SSH service banners
-- **Hardening Checklist**: Provides comprehensive SSH hardening recommendations
-- **Configuration Guidance**: Best practices for SSH security
-- **Version Detection**: Identifies SSH service versions
+- **Banner grab** — async SSH banner retrieval with configurable timeout.
+- **Version identification** — the banner reveals the server/OpenSSH version.
+- **Hardening checklist** — static, current OpenSSH best-practice guidance printed on every run.
+- **Zero dependencies** — Python standard library only (Python 3.8+).
 
-## Installation
+## Quickstart
 
-### Requirements
-
-- Python 3.8+
-- Standard library only (no external dependencies!)
-
-### Setup
+Prerequisite: Python 3.8+ (standard library only).
 
 ```bash
-# Clone the repository
-git clone https://github.com/5h4d0wn1k/ssh-hardening-checker.git
-cd ssh-hardening-checker
-
-# No installation needed!
+python ssh_hardening_check.py --host 192.0.2.10
+python ssh_hardening_check.py --host 192.0.2.10 --port 2222 --timeout 5.0
 python ssh_hardening_check.py --help
 ```
 
-## Usage
+Run it against a sandbox VM or your own lab host first.
 
-### Basic Usage
+## Project structure
 
-```bash
-# Check SSH hardening
-python ssh_hardening_check.py --host 192.168.1.100
-```
+- `ssh_hardening_check.py` — analyzer and CLI (`--host`, `--port`, `--timeout`).
+- `requirements.txt` — dependency notes (stdlib only).
+- `CHANGELOG.md` — release history; `VERSION` — current version (1.1.0).
 
-### Custom Port
+## Documentation
 
-```bash
-# Check SSH on custom port
-python ssh_hardening_check.py \
-  --host 192.168.1.100 \
-  --port 2222
-```
-
-### Custom Timeout
-
-```bash
-# Set custom timeout
-python ssh_hardening_check.py \
-  --host 192.168.1.100 \
-  --port 22 \
-  --timeout 5.0
-```
-
-## Command-Line Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--host` | Target SSH host (required) | - |
-| `--port` | SSH port | 22 |
-| `--timeout` | Connection timeout (seconds) | 3.0 |
-
-## Output Format
-
-```
-[+] Banner: SSH-2.0-OpenSSH_8.0
-
-Checklist:
-- Disable password auth; use key-based only (PasswordAuthentication no).
-- Disable root login (PermitRootLogin no).
-- Use strong Kex/MAC/Cipher (per latest OpenSSH defaults).
-- Set LoginGraceTime low; MaxAuthTries low.
-- Use AllowUsers/AllowGroups to limit.
-- Move off default port only as a minor noise-reduction (not security).
-```
-
-## Hardening Recommendations
-
-### 1. Password Authentication
-
-**Recommendation**: Disable password authentication, use key-based only
-
-```bash
-# In /etc/ssh/sshd_config
-PasswordAuthentication no
-PubkeyAuthentication yes
-```
-
-### 2. Root Login
-
-**Recommendation**: Disable root login
-
-```bash
-# In /etc/ssh/sshd_config
-PermitRootLogin no
-```
-
-### 3. Key Exchange Algorithms
-
-**Recommendation**: Use strong key exchange algorithms
-
-```bash
-# In /etc/ssh/sshd_config
-KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
-```
-
-### 4. MAC Algorithms
-
-**Recommendation**: Use strong MAC algorithms
-
-```bash
-# In /etc/ssh/sshd_config
-MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com
-```
-
-### 5. Cipher Algorithms
-
-**Recommendation**: Use strong cipher algorithms
-
-```bash
-# In /etc/ssh/sshd_config
-Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
-```
-
-### 6. Login Grace Time
-
-**Recommendation**: Set low login grace time
-
-```bash
-# In /etc/ssh/sshd_config
-LoginGraceTime 30
-MaxAuthTries 3
-```
-
-### 7. User Restrictions
-
-**Recommendation**: Limit allowed users
-
-```bash
-# In /etc/ssh/sshd_config
-AllowUsers user1 user2
-# Or
-AllowGroups sshusers
-```
-
-## Use Cases
-
-- **Security Audits**: Check SSH configuration on your servers
-- **Hardening**: Implement SSH security best practices
-- **Compliance**: Meet security compliance requirements
-- **Educational Purposes**: Learn about SSH security
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [SECURITY.md](SECURITY.md)
+- [ETHICS.md](ETHICS.md) · [SCOPE.md](SCOPE.md)
 
 ## Contributing
 
-Contributions are welcome! Please:
+See [CONTRIBUTING.md](CONTRIBUTING.md). Keep the tool dependency-free and the guidance current.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
----
-
-## ⚠️ Legal Disclaimer
-
-### Educational Purpose Only
-This tool is provided strictly for **educational purposes** and **authorized security testing** only. It is intended to help security professionals and students learn about security concepts in controlled environments.
-
-### Authorized Use Only
-- You must have **explicit written authorization** before testing any system you do not own
-- Unauthorized access to computer systems is **illegal** and punishable under laws including but not limited to the Computer Fraud and Abuse Act (CFAA), Computer Misuse Act, and similar legislation worldwide
-- Only use this tool on systems you own, have permission to test, or in isolated lab environments
-
-### No Warranty
-This software is provided "AS IS" without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. The author makes no representations or warranties regarding the accuracy, completeness, or reliability of this software.
-
-### Limitation of Liability
-**In no event shall the author (Nikhil Nagpure) be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.**
-
-### User Responsibility
-- The user assumes **full responsibility** for any consequences resulting from the use of this tool
-- The author is **not responsible** for any misuse, damage, or illegal activities performed with this software
-- Users are solely responsible for ensuring compliance with all applicable local, state, national, and international laws and regulations
-
-### Indemnification
-By using this software, you agree to **indemnify, defend, and hold harmless** the author from and against any and all claims, liabilities, damages, losses, costs, and expenses (including reasonable attorneys fees) arising from or related to your use of this software.
-
-### Responsible Disclosure
-If you discover vulnerabilities using this tool, please follow responsible disclosure practices and report them to the affected parties through appropriate channels.
-
----
-
-**By using this software, you acknowledge that you have read, understood, and agree to be bound by this disclaimer.**
 ## License
 
-This project is for educational purposes only. Use responsibly and ethically.
-
----
-
-**Remember**: Always implement SSH hardening recommendations on your servers!
+MIT — see [LICENSE](LICENSE).
